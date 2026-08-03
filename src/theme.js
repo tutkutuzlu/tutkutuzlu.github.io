@@ -1,6 +1,6 @@
 const themes = new Set(["light", "dark", "system"]);
 const menu = document.querySelector("[data-theme-menu]");
-const options = [...document.querySelectorAll("[data-theme]")];
+const options = [...document.querySelectorAll('[role="radio"][data-theme]')];
 
 function resolve(preference) {
   return preference === "system" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : preference;
