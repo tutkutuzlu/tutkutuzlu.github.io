@@ -1,0 +1,15 @@
+[
+  {
+    "id": "alltools",
+    "name": "AllTools",
+    "description": "Fast, free browser tools for text, images, files and more.",
+    "url": "https://tutkutuzlu.github.io/alltools/",
+    "status": "Live",
+    "icon": "tools",
+    "featured": true,
+    "order": 10,
+    "stats": {
+      "label": "19 tools"
+    }
+  }
+]
