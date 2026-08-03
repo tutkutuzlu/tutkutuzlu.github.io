@@ -38,7 +38,8 @@ await Promise.all([
   writeFile(path.join(dist,"assets","theme.js"),await readFile(path.join(root,"src","theme.js"))),
   writeFile(path.join(dist,"favicon.svg"),await readFile(path.join(root,"src","favicon.svg"))),
   writeFile(path.join(dist,"robots.txt"),"User-agent: *\nAllow: /\nSitemap: https://tutkutuzlu.github.io/sitemap.xml\n"),
-  writeFile(path.join(dist,"sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://tutkutuzlu.github.io/</loc></url>\n</urlset>\n'),
+  writeFile(path.join(dist,"sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap>\n    <loc>https://tutkutuzlu.github.io/portal-sitemap.xml</loc>\n  </sitemap>\n  <sitemap>\n    <loc>https://tutkutuzlu.github.io/alltools/sitemap.xml</loc>\n  </sitemap>\n</sitemapindex>\n'),
+  writeFile(path.join(dist,"portal-sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://tutkutuzlu.github.io/</loc></url>\n</urlset>\n'),
   writeFile(path.join(dist,".nojekyll"),"")
 ]);
 const homepagePath = path.join(dist, "index.html");
