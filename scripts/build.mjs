@@ -4,6 +4,8 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const dist = path.join(root, "dist");
 const projects = JSON.parse(await readFile(path.join(root, "data", "projects.json"), "utf8"));
+const ads = JSON.parse(await readFile(path.join(root, "data", "ads.json"), "utf8"));
+const production = process.argv.includes("--production");
 const required = ["id", "name", "description", "url", "status", "icon", "featured", "order", "stats"];
 const ids = new Set();
 for (const project of projects) {
@@ -20,6 +22,9 @@ const cards = [...projects].sort((a,b)=>Number(b.featured)-Number(a.featured)||a
 const projectJsonLd = projects.map(project => ({ "@type":"CreativeWork", name:project.name, description:project.description, url:project.url }));
 const icon = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>`;
 const themeIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/></svg>`;
+const adsenseTag = production && ads.enabled && ads.provider === "google" && /^pub-\d{16}$/.test(ads.publisherId)
+  ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${ads.publisherId}" crossorigin="anonymous"></script>`
+  : "";
 
 const shell = ({title,description,body,canonical="https://tutkutuzlu.github.io/",structured}) => `<!doctype html><html lang="en" data-theme="light" data-theme-preference="system"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>${escape(title)}</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${canonical}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${canonical}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/styles.css"><script>try{const p=localStorage.getItem("projects-theme")||"system",r=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p;document.documentElement.dataset.themePreference=p;document.documentElement.dataset.theme=r;document.documentElement.style.colorScheme=r}catch{}</script><script type="application/ld+json">${JSON.stringify(structured).replace(/</g,"\\u003c")}</script></head><body><header class="site-header"><div class="container header-inner"><a class="brand" href="/"><span class="brand-mark">${icon}</span><span>Tutku Tuzlu Projects</span></a><div class="header-actions"><nav class="site-nav" aria-label="Primary"><a href="/#projects">Projects</a></nav><details class="theme-menu" data-theme-menu><summary aria-label="Choose theme" title="Choose theme"><span class="icon">${themeIcon}</span></summary><div class="theme-panel" role="radiogroup" aria-label="Theme"><button type="button" role="radio" data-theme="system">System</button><button type="button" role="radio" data-theme="light">Light</button><button type="button" role="radio" data-theme="dark">Dark</button></div></details></div></div></header><main>${body}</main><footer class="site-footer"><div class="container footer-inner"><p>© ${new Date().getUTCFullYear()} Tutku Tuzlu</p><nav class="footer-nav" aria-label="Footer"><a href="https://tutkutuzlu.github.io/alltools/">AllTools</a><a href="https://github.com/tutkutuzlu">GitHub profile</a></nav></div></footer><script type="module" src="/assets/theme.js"></script></body></html>`;
 const description = "Independent digital projects, tools and publications built and published by Tutku Tuzlu.";
@@ -36,4 +41,12 @@ await Promise.all([
   writeFile(path.join(dist,"sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://tutkutuzlu.github.io/</loc></url>\n</urlset>\n'),
   writeFile(path.join(dist,".nojekyll"),"")
 ]);
+await writeFile(path.join(dist,"ads.txt"),`google.com, ${ads.publisherId}, DIRECT, ${ads.certificationAuthorityId}\n`);
+if (adsenseTag) {
+  for (const page of ["index.html", "404.html"]) {
+    const target = path.join(dist, page);
+    const html = await readFile(target, "utf8");
+    await writeFile(target, html.replace("</head>", `${adsenseTag}</head>`));
+  }
+}
 console.log(`Built portal with ${projects.length} active project(s).`);
