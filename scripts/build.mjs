@@ -41,6 +41,9 @@ await Promise.all([
   writeFile(path.join(dist,"sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://tutkutuzlu.github.io/</loc></url>\n</urlset>\n'),
   writeFile(path.join(dist,".nojekyll"),"")
 ]);
+const homepagePath = path.join(dist, "index.html");
+const homepageHtml = await readFile(homepagePath, "utf8");
+await writeFile(homepagePath, homepageHtml.replace("</head>", '<meta name="google-site-verification" content="aSjY_Ai-Pfq17QcKWQdB44wUdpcB754-4yv02m4ApnU" /></head>'));
 await writeFile(path.join(dist,"ads.txt"),`google.com, ${ads.publisherId}, DIRECT, ${ads.certificationAuthorityId}\n`);
 if (adsenseTag) {
   for (const page of ["index.html", "404.html"]) {
