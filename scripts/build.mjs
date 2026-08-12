@@ -16,6 +16,11 @@ for (const project of projects) {
 }
 
 const escape = (value) => String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+const escapeXml = (value) => String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+const portalSitemapUrl = "https://tutkutuzlu.github.io/portal-sitemap.xml";
+const allToolsSitemapUrl = "https://tutkutuzlu.github.io/alltools/sitemap.xml";
+const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap>\n    <loc>${escapeXml(portalSitemapUrl)}</loc>\n  </sitemap>\n  <sitemap>\n    <loc>${escapeXml(allToolsSitemapUrl)}</loc>\n  </sitemap>\n</sitemapindex>\n`;
+const portalSitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://tutkutuzlu.github.io/</loc>\n  </url>\n</urlset>\n`;
 const toolsIcon = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v13H4z"/><path d="M8 9h8M8 12h8M8 15h5"/></svg>`;
 const icons = { tools: toolsIcon };
 const cards = [...projects].sort((a,b)=>Number(b.featured)-Number(a.featured)||a.order-b.order).map(project => `<article class="project-card${project.featured ? " project-card--featured" : ""}"><div class="project-top"><div class="project-identity"><span class="project-icon">${icons[project.icon] ?? toolsIcon}</span><div><h3>${escape(project.name)}</h3><p>${escape(project.description)}</p></div></div><span class="status">${escape(project.status)}</span></div><div class="project-footer"><span class="stat">${escape(project.stats.label)}</span><a class="button" href="${escape(project.url)}">Open ${escape(project.name)} <span aria-hidden="true">→</span></a></div></article>`).join("\n");
@@ -38,8 +43,8 @@ await Promise.all([
   writeFile(path.join(dist,"assets","theme.js"),await readFile(path.join(root,"src","theme.js"))),
   writeFile(path.join(dist,"favicon.svg"),await readFile(path.join(root,"src","favicon.svg"))),
   writeFile(path.join(dist,"robots.txt"),"User-agent: *\nAllow: /\nSitemap: https://tutkutuzlu.github.io/sitemap.xml\n"),
-  writeFile(path.join(dist,"sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap>\n    <loc>https://tutkutuzlu.github.io/portal-sitemap.xml</loc>\n  </sitemap>\n  <sitemap>\n    <loc>https://tutkutuzlu.github.io/alltools/sitemap.xml</loc>\n  </sitemap>\n</sitemapindex>\n'),
-  writeFile(path.join(dist,"portal-sitemap.xml"),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://tutkutuzlu.github.io/</loc></url>\n</urlset>\n'),
+  writeFile(path.join(dist,"sitemap.xml"),sitemapIndex),
+  writeFile(path.join(dist,"portal-sitemap.xml"),portalSitemap),
   writeFile(path.join(dist,".nojekyll"),"")
 ]);
 const homepagePath = path.join(dist, "index.html");
