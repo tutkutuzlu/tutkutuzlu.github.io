@@ -2,14 +2,25 @@
   {
     "id": "alltools",
     "name": "AllTools",
-    "description": "Fast, free browser tools for text, images, files and more.",
+    "description": "Fast, free browser tools for text, development, conversions, colors, security and more.",
     "url": "https://tutkutuzlu.github.io/alltools/",
+    "sitemapUrl": "https://tutkutuzlu.github.io/alltools/sitemap.xml",
     "status": "Live",
     "icon": "tools",
-    "featured": true,
+    "featured": false,
     "order": 10,
-    "stats": {
-      "label": "19 tools"
-    }
+    "stats": { "label": "104 tools" }
+  },
+  {
+    "id": "awi-games",
+    "name": "AWI Games",
+    "description": "Short, accessible browser games designed for focused play on mobile and desktop.",
+    "url": "https://tutkutuzlu.github.io/awi-games/",
+    "sitemapUrl": "https://tutkutuzlu.github.io/awi-games/sitemap.xml",
+    "status": "Live",
+    "icon": "games",
+    "featured": false,
+    "order": 20,
+    "stats": { "label": "2 games" }
   }
 ]
